@@ -2,6 +2,8 @@ import "dotenv/config";
 import express from "express";
 import path from "path";
 import rootRoute from "./routes/root.js";
+import userRoute from "./routes/userRoutes.js"
+import noteRoute from "./routes/noteRoutes.js"
 import { fileURLToPath } from "url";
 import { logger, logEvents } from "./middleware/logger.js";
 import { errorHandler } from "./middleware/errorHandler.js";
@@ -25,6 +27,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/", express.static(path.join(__dirname, "public")));
 app.use("/", rootRoute);
+app.use("/users", userRoute);
+app.use("/notes", noteRoute);
 
 console.log(process.env.NODE_ENV);
 
@@ -47,6 +51,7 @@ mongoose.connection.once("open", () => {
 });
 
 mongoose.connection.on('error', err => {
-  console.log(err);
+  console.log(err); 
   logEvents(`${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`, 'mongoErrDb.log')
 })
+ 

@@ -3,7 +3,7 @@ import Inc from 'mongoose-sequence';
 
 const AutoIncrement = Inc(mongoose)
 
-const noteSchema = mongoose.Schema(
+const noteSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
