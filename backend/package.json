@@ -4,13 +4,11 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server",
-    "dev": "nodemon server"
+    "start": "nodemon server"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
@@ -25,5 +23,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
-  }
+  },
+  "description": ""
 }
