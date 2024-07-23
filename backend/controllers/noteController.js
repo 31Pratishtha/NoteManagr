@@ -96,7 +96,7 @@ const deleteNote = asyncHandler(async (req, res) => {
   if (result.deletedCount === 0) {
     return res.status(400).json({ message: "Note deletion failed" });
   }
-  const reply = `Username ${note.title} with ID ${note._id} deleted`;
+  const reply = `Note ${note.title} with ID ${note._id} deleted`;
 
   res.json(reply);
 });

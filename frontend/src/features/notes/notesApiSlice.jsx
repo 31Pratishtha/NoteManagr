@@ -1,24 +1,24 @@
 import { createEntityAdapter, createSelector } from "@reduxjs/toolkit";
 import { apiSlice } from "../../app/api/apiSlice";
 
-const notesAdapter = createEntityAdapter({ 
+const notesAdapter = createEntityAdapter({
   sortComparer: (a, b) =>
     a.completed === b.completed ? 0 : a.completed ? 1 : -1,
 });
 
 const initialState = notesAdapter.getInitialState();
 
-const notesApiSlice = apiSlice.injectEndpoints({
+export const notesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getNotes: builder.query({
       query: () => "/notes",
       validateStatus: (response, result) => {
         response.status === 200 && !result.isError;
       },
-      keepUnusedDataFor: 5,
       transformResponse: (responseData) => {
         const loadedNotes = responseData.map((note) => {
           note.id = note._id;
+          // note.uid = note._id;
           return note;
         });
         return notesAdapter.setAll(initialState, loadedNotes);
@@ -34,10 +34,42 @@ const notesApiSlice = apiSlice.injectEndpoints({
         }
       },
     }),
+
+    addNewNote: builder.mutation({
+      query: (initialNoteData) => ({
+        url: "/notes",
+        method: "POST",
+        body: { ...initialNoteData },
+      }),
+      invalidatesTags: [{ type: "Note", id: "LIST" }],
+    }),
+
+    updateNote: builder.mutation({
+      query: (initialNoteData) => ({
+        url: "/notes",
+        method: "PATCH",
+        body: { ...initialNoteData },
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: "Note", id: arg.id }],
+    }),
+
+    deleteNote: builder.mutation({
+      query: ({ id }) => ({
+        url: "/notes",
+        method: "DELETE",
+        body: { id },
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: "Note", id: arg.id }],
+    }),
   }),
 });
 
-export const { useGetNotesQuery } = notesApiSlice;
+export const {
+  useGetNotesQuery,
+  useAddNewNoteMutation,
+  useUpdateNoteMutation,
+  useDeleteNoteMutation,
+} = notesApiSlice;
 
 //defining selectors
 

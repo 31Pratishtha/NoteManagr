@@ -6,6 +6,11 @@ import DashLayout from "./components/DashLayout";
 import Welcome from "./features/auth/Welcome";
 import NotesList from "./features/notes/NotesList";
 import UsersList from "./features/users/UsersList";
+import EditUser from "./features/users/EditUser";
+import EditNote from "./features/notes/EditNote";
+import NewNote from "./features/notes/NewNote";
+import NewUserForm from "./features/users/NewUserForm";
+import Prefetch from "./features/auth/Prefetch";
 
 const router = createBrowserRouter([
   {
@@ -18,12 +23,33 @@ const router = createBrowserRouter([
 
       //Dashboard Routes
       {
-        path: "dash",
-        element: <DashLayout />,
+        element: <Prefetch />,
         children: [
-          { index: true, element: <Welcome /> },
-          { path: "notes", element: <NotesList /> },
-          { path: "users", element: <UsersList /> },
+          {
+            path: "dash",
+            element: <DashLayout />,
+            children: [
+              { index: true, element: <Welcome /> },
+              {
+                path: "notes",
+                // element: <NotesList />,
+                children: [
+                  { index: true, element: <NotesList /> },
+                  { path: ":id", element: <EditNote /> },
+                  { path: "new", element: <NewNote /> },
+                ],
+              },
+              {
+                path: "users",
+                // element: <UsersList />,
+                children: [
+                  { index: true, element: <UsersList /> },
+                  { path: ":id", element: <EditUser /> },
+                  { path: "new", element: <NewUserForm /> },
+                ],
+              },
+            ],
+          },
         ],
       },
     ],

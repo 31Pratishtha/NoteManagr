@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useGetUsersQuery } from "./usersApiSlice";
 import User from "./User";
 
@@ -9,7 +9,11 @@ export default function UsersList() {
     isSuccess,
     isError,
     error,
-  } = useGetUsersQuery();
+  } = useGetUsersQuery(undefined, {
+    pollingInterval: 60000,
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
 
   let content;
 
@@ -32,12 +36,10 @@ export default function UsersList() {
             <th scope="col">Edit</th>
           </tr>
         </thead>
-        <tbody>
-          {tableContent}
-        </tbody>
+        <tbody>{tableContent}</tbody>
       </table>
-    )
+    );
   }
 
-  return content
+  return content;
 }

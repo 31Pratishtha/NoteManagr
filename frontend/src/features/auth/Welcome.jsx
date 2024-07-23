@@ -10,7 +10,13 @@ export default function Welcome() {
         <Link to={"/dash/notes"}>View Notes</Link>
       </p>
       <p>
-        <Link to={"/dash/users"}>View User settings</Link>
+        <Link to={"/dash/notes/new"}>Add new note</Link>
+      </p>
+      <p>
+        <Link to={"/dash/users"}>View Users</Link>
+      </p>
+      <p>
+        <Link to={"/dash/users/new"}>Add new user</Link>
       </p>
     </section>
   );
