@@ -14,14 +14,30 @@ export default function EditNoteForm({ note, users }) {
 		{ isSuccess: isDelSuccess, isError: isDelError, error: delError },
 	] = useDeleteNoteMutation()
 
-	const [title, seTitle] = useState(note.title)
+	const [title, setTitle] = useState(note.title)
 	const [text, setText] = useState(note.text)
 	const [completed, setCompleted] = useState(note.completed)
 	const [userId, setUserId] = useState(note.user)
 
+	const created = new Date(note.createdAt).toLocaleString('en-us', {
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric',
+		hour: 'numeric',
+		minute: 'numeric',
+	})
+	const updated = new Date(note.updatedAt).toLocaleString('en-us', {
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric',
+		hour: 'numeric',
+		minute: 'numeric',
+	})
+
+
 	useEffect(() => {
 		if (isSuccess || isDelSuccess) {
-			seTitle('')
+			setTitle('')
 			setText('')
 			setUserId('')
 			navigate('/dash/notes')
@@ -29,18 +45,32 @@ export default function EditNoteForm({ note, users }) {
 	}, [isSuccess, isDelSuccess, navigate])
 
 	const onUpdateNoteClicked = async (e) => {
-    e.preventDefault()
-    await updateNote({id: note.id, title, title, text, completed, user: userId})
-  }
+		e.preventDefault()
+		await updateNote({
+			id: note.id,
+			user: userId,
+			title,
+			text,
+			completed,
+		})
+	}
 	const onDeleteNoteClicked = async (e) => {
-    e.preventDefault()
-    await deleteNote({id: note.id})
-  }
+		e.preventDefault()
+		await deleteNote({ id: note.id })
+	}
 
-	const onTitleChanged = (e) => {e.target.value}
-	const onTextChanged = (e) => {e.target.value}
-	const onStatusChanged = (e) => {e.target.value}
-	const onUserIdChanged = (e) => {e.target.value}
+	const onTitleChanged = (e) => {
+		setTitle(e.target.value)
+	}
+	const onTextChanged = (e) => {
+		setText(e.target.value)
+	}
+	const onStatusChanged = (e) => {
+		setCompleted(prev => !prev)
+	}
+	const onUserIdChanged = (e) => {
+		setUserId(e.target.value)
+	}
 
 	const options = users.map((user) => {
 		return (
@@ -50,7 +80,6 @@ export default function EditNoteForm({ note, users }) {
 		)
 	})
 
-	console.log(note)
 	const errorContent = (error?.data?.message || delError?.data?.message) ?? ''
 
 	const content = (
@@ -76,15 +105,21 @@ export default function EditNoteForm({ note, users }) {
 				<textarea id="text" value={text} onChange={onTextChanged}></textarea>
 
 				<label htmlFor="status">Status:</label>
-				<select id="status" value={completed} onChange={onStatusChanged}>
-					<option value="true">Completed</option>
-					<option value="false">Pending</option>
-				</select>
+				<input type="checkbox" checked={completed} onChange={onStatusChanged} />
 
 				<label htmlFor="user">Assigned To:</label>
 				<select id="userId" value={userId} onChange={onUserIdChanged}>
-          {options}
-        </select>
+					{options}
+				</select>
+
+				<div>
+					<p>
+						Created At: <br /> {created}
+					</p>
+					<p>
+						Updated At: <br /> {updated}
+					</p>
+				</div>
 			</form>
 		</>
 	)
