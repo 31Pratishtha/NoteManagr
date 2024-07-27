@@ -30,9 +30,6 @@ app.use('/', express.static(path.join(__dirname, 'public')))
 app.use('/', rootRoute)
 app.use('/users', userRoute)
 app.use('/notes', noteRoute)
-app.use('/auths', (req, res) => {
-  res.json({message: "heyyy yes"});
-})
 app.use('/auth', authRoute)
 
 console.log(process.env.NODE_ENV)
