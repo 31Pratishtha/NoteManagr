@@ -35,7 +35,7 @@ export default function DashHeader() {
 				<Link to="/dash">
 					<h1 className="dash-header__title">techNotes</h1>
 				</Link>
-				{logoutButton}
+				<Link to="/">{logoutButton}</Link>
 				<nav className="dash-header__nav">{/* add nav buttons later */}</nav>
 			</div>
 		</header>

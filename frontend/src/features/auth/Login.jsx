@@ -1,5 +1,5 @@
 import { useNavigate, Link } from 'react-router-dom'
-
+import usePersist from '../../hooks/usePersist.jsx'
 import { useDispatch } from 'react-redux'
 import { useEffect, useRef, useState } from 'react'
 import { useLoginMutation } from './authApiSlice'
@@ -9,6 +9,8 @@ export default function Login() {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [errMsg, setErrMsg] = useState('')
+
+	const [persist, setPersist] = usePersist()
 
 	const userRef = useRef()
 	const errRef = useRef()
@@ -28,6 +30,7 @@ export default function Login() {
 
 	const handleUserInput = (e) => setUsername(e.target.value)
 	const handlePwdInput = (e) => setPassword(e.target.value)
+	const handleToggle = () => setPersist((prev) => !prev)
 
 	const handleFormSubmit = async (e) => {
 		e.preventDefault()
@@ -82,6 +85,11 @@ export default function Login() {
 					/>
 
 					<button>Log In</button>
+
+					<label htmlFor="persist">
+						<input type="checkbox" onChange={handleToggle} checked={persist} />
+						Trust this device
+					</label>
 				</form>
 			</main>
 			<footer>
