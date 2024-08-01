@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import { useGetUsersQuery } from "./usersApiSlice";
 import User from "./User";
+import useTitle from "../../hooks/useTitle";
 
 export default function UsersList() {
+  useTitle('Users')
   const {
     data: users,
     isLoading,
