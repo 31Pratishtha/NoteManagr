@@ -45,7 +45,7 @@ export default function PersistLogin() {
 		console.log(error)
 		content = (
 			<p>
-				Error: {error.data?.message}
+				{`${error?.data?.message} - `}
 				<Link to="/login">Please Login Again</Link>
 			</p>
 		)

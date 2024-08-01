@@ -1,51 +1,66 @@
-import React from "react";
-import { useGetNotesQuery } from "./notesApiSlice";
-import Note from "./Note";
+import React from 'react'
+import { useGetNotesQuery } from './notesApiSlice'
+import Note from './Note'
+import useAuth from '../../hooks/useAuth'
 
 export default function NotesList() {
-  const {
-    data: notes,
-    isLoading,
-    isSuccess,
-    isError,
-    error,
-  } = useGetNotesQuery(undefined, {
-    pollingInterval: 15000,
-    refetchOnFocus: true,
-    refetchOnMountOrArgChange: true,
-  });
+	const {
+		data: notes,
+		isLoading,
+		isSuccess,
+		isError,
+		error,
+	} = useGetNotesQuery(undefined, {
+		pollingInterval: 15000,
+		refetchOnFocus: true,
+		refetchOnMountOrArgChange: true,
+	})
 
-  let content;
+	const { username, isAdmin, isManager } = useAuth()
 
-  if (isLoading) content = <p>Loading...</p>;
+	let content
 
-  if (isError) content = <p>{error?.data?.message}</p>;
+	if (isLoading) content = <p>Loading...</p>
 
-  console.log(notes);
+	if (isError) content = <p>{error?.data?.message}</p>
 
-  if (isSuccess) {
-    const { ids } = notes;
+	// console.log(notes)
 
-    const tableContent = ids?.length
-      ? ids.map((noteId) => <Note key={noteId} noteId={noteId} />)
-      : console.log("errorHere");
+	if (isSuccess) {
+		const { ids, entities } = notes
+    console.log(ids)
+    console.log(entities);
+		let filteredIds
 
-    content = (
-      <table>
-        <thead>
-          <tr>
-            <th>Status</th>
-            <th>Created</th>
-            <th>Updated</th>
-            <th>Title</th>
-            <th>Owner</th>
-            <th>Edit</th>
-          </tr>
-        </thead>
-        <tbody>{tableContent}</tbody>
-      </table>
-    );
-  }
+		if (isAdmin || isManager) {
+			filteredIds = [...ids]
+		} else {
+			filteredIds = ids.filter(
+        (noteId) => entities[noteId].username === username
+			)
+      console.log(filteredIds)
+		}
 
-  return content;
+		const tableContent =
+			ids?.length && 
+			filteredIds.map((noteId) => <Note key={noteId} noteId={noteId} />)
+
+		content = (
+			<table>
+				<thead>
+					<tr>
+						<th>Status</th>
+						<th>Created</th>
+						<th>Updated</th>
+						<th>Title</th>
+						<th>Owner</th>
+						<th>Edit</th>
+					</tr>
+				</thead>
+				<tbody>{tableContent}</tbody>
+			</table>
+		)
+	}
+
+	return content
 }

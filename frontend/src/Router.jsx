@@ -12,6 +12,8 @@ import NewNote from './features/notes/NewNote'
 import NewUserForm from './features/users/NewUserForm'
 import Prefetch from './features/auth/Prefetch'
 import PersistLogin from './features/auth/PersistLogin'
+import { ROLES } from './config/roles'
+import RequireAuth from './features/auth/RequireAuth'
 
 const router = createBrowserRouter([
 	{
@@ -19,37 +21,51 @@ const router = createBrowserRouter([
 		element: <App />,
 		children: [
 			//children routes
+			//public Routes
 			{ index: true, element: <Public /> },
 			{ path: 'login', element: <Login /> },
 
 			//Dashboard Routes
+			//protected routes
 			{
 				element: <PersistLogin />,
 				children: [
 					{
-						element: <Prefetch />,
+						element: <RequireAuth allowedRoles={[...Object.values(ROLES)]} />,
 						children: [
 							{
-								path: 'dash',
-								element: <DashLayout />,
+								element: <Prefetch />,
 								children: [
-									{ index: true, element: <Welcome /> },
 									{
-										path: 'notes',
-										// element: <NotesList />,
+										path: 'dash',
+										element: <DashLayout />,
 										children: [
-											{ index: true, element: <NotesList /> },
-											{ path: ':id', element: <EditNote /> },
-											{ path: 'new', element: <NewNote /> },
-										],
-									},
-									{
-										path: 'users',
-										// element: <UsersList />,
-										children: [
-											{ index: true, element: <UsersList /> },
-											{ path: ':id', element: <EditUser /> },
-											{ path: 'new', element: <NewUserForm /> },
+											{ index: true, element: <Welcome /> },
+											{
+												path: 'notes',
+												children: [
+													{ index: true, element: <NotesList /> },
+													{ path: ':id', element: <EditNote /> },
+													{ path: 'new', element: <NewNote /> },
+												],
+											},
+											{
+												element: (
+													<RequireAuth
+														allowedRoles={[ROLES.Admin, ROLES.Manager]}
+													/>
+												),
+												children: [
+													{
+														path: 'users',
+														children: [
+															{ index: true, element: <UsersList /> },
+															{ path: ':id', element: <EditUser /> },
+															{ path: 'new', element: <NewUserForm /> },
+														],
+													},
+												],
+											},
 										],
 									},
 								],

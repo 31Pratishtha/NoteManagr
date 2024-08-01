@@ -3,9 +3,11 @@ import { useUpdateNoteMutation, useDeleteNoteMutation } from './notesApiSlice'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons'
+import useAuth from '../../hooks/useAuth'
 
 export default function EditNoteForm({ note, users }) {
 	const navigate = useNavigate()
+	const { isManager, isAdmin } = useAuth()
 	const [updateNote, { isLoading, isError, error, isSuccess }] =
 		useUpdateNoteMutation()
 
@@ -33,7 +35,6 @@ export default function EditNoteForm({ note, users }) {
 		hour: 'numeric',
 		minute: 'numeric',
 	})
-
 
 	useEffect(() => {
 		if (isSuccess || isDelSuccess) {
@@ -66,7 +67,7 @@ export default function EditNoteForm({ note, users }) {
 		setText(e.target.value)
 	}
 	const onStatusChanged = (e) => {
-		setCompleted(prev => !prev)
+		setCompleted((prev) => !prev)
 	}
 	const onUserIdChanged = (e) => {
 		setUserId(e.target.value)
@@ -82,6 +83,14 @@ export default function EditNoteForm({ note, users }) {
 
 	const errorContent = (error?.data?.message || delError?.data?.message) ?? ''
 
+	let deleteNoteButton = null
+	if (isManager || isAdmin) {
+		deleteNoteButton = (
+			<button onClick={onDeleteNoteClicked}>
+				<FontAwesomeIcon icon={faTrash} />
+			</button>
+		)
+	}
 	const content = (
 		<>
 			<p>{errorContent}</p>
@@ -92,9 +101,7 @@ export default function EditNoteForm({ note, users }) {
 						<button onClick={onUpdateNoteClicked}>
 							<FontAwesomeIcon icon={faSave} />
 						</button>
-						<button onClick={onDeleteNoteClicked}>
-							<FontAwesomeIcon icon={faTrash} />
-						</button>
+						{deleteNoteButton}
 					</div>
 				</div>
 
