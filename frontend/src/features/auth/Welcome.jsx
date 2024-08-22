@@ -1,31 +1,31 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
+import { Box, Typography, Link } from '@mui/material'
 
 export default function Welcome() {
 	const { username, isManager, isAdmin } = useAuth()
 	const content = (
-		<section>
-			<p></p>
-			<h1>Welcome ! {username}</h1>
-			<p>
-				<Link to={'/dash/notes'}>View Notes</Link>
-			</p>
-			<p>
-				<Link to={'/dash/notes/new'}>Add new note</Link>
-			</p>
+		<Box>
+			<Typography variant='h4'>Welcome ! {username}</Typography>
+			<Typography>
+				<Link component={RouterLink} to={'/dash/tasks'}>View Tasks</Link>
+			</Typography>
+			<Typography>
+				<Link component={RouterLink} to={'/dash/tasks/new'}>Add new task</Link>
+			</Typography>
 
 			{(isManager || isAdmin) && (
-				<p>
-					<Link to={'/dash/users'}>View Users</Link>
-				</p>
+				<Typography>
+					<Link component={RouterLink} to={'/dash/users'}>View Users</Link>
+				</Typography>
 			)}
 			{(isManager || isAdmin) && (
-				<p>
-					<Link to={'/dash/users/new'}>Add new user</Link>
-				</p>
+				<Typography>
+					<Link component={RouterLink} to={'/dash/users/new'}>Add new user</Link>
+				</Typography>
 			)}
-		</section>
+		</Box>
 	)
 	return content
 }

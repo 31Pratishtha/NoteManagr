@@ -1,5 +1,5 @@
 import User from '../models/User.js'
-import Note from '../models/Note.js'
+import Task from '../models/Task.js'
 import asyncHandler from 'express-async-handler'
 import bcrypt from 'bcrypt'
 
@@ -112,11 +112,11 @@ const deleteUser = asyncHandler(async (req, res) => {
 		return res.status(400).json({ message: 'User ID required' })
 	}
 
-	//check assigned note
-	const note = await Note.findOne({ user: id }).lean().exec()
+	//check assigned task
+	const task = await Task.findOne({ user: id }).lean().exec()
 
-	if (note) {
-		return res.status(400).json({ message: 'User has assigned notes' })
+	if (task) {
+		return res.status(400).json({ message: 'User has assigned tasks' })
 	}
 
 	//find user

@@ -1,4 +1,16 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import {
+	Typography,
+	Toolbar,
+	AppBar,
+	Drawer,
+	List,
+	ListItem,
+	Box,
+	Button,
+	Link,
+} from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
 	faRightFromBracket,
@@ -7,18 +19,21 @@ import {
 	faFilePen,
 	faFileCirclePlus,
 } from '@fortawesome/free-solid-svg-icons'
-import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom'
 import { useSendLogoutMutation } from '../features/auth/authApiSlice'
 import useAuth from '../hooks/useAuth'
+import Welcome from '../features/auth/Welcome'
 
 const DASH_REGEX = /^\/dash(\/)?$/
-const NOTES_REGEX = /^\/dash\/notes(\/)?$/
+const TASKS_REGEX = /^\/dash\/tasks(\/)?$/
 const USERS_REGEX = /^\/dash\/users(\/)?$/
 
 export default function DashHeader() {
 	const navigate = useNavigate()
 	const { pathname } = useLocation()
 	const { isAdmin, isManager } = useAuth()
+
+	const [open, setOpen] = useState(false)
 
 	const [sendLogout, { isLoading, isError, error, isSuccess }] =
 		useSendLogoutMutation()
@@ -34,9 +49,9 @@ export default function DashHeader() {
 		navigate('/')
 	}
 	const onUsersClicked = () => navigate('/dash/users')
-	const onNotesClicked = () => navigate('/dash/notes')
+	const onTasksClicked = () => navigate('/dash/tasks')
 	const onNewUserClicked = () => navigate('/dash/users/new')
-	const onNewNoteClicked = () => navigate('/dash/notes/new')
+	const onNewTaskClicked = () => navigate('/dash/tasks/new')
 
 	if (isLoading) return <p>Logging out...</p>
 
@@ -59,10 +74,10 @@ export default function DashHeader() {
 		}
 	}
 
-	let notesButton = null
-	if (!NOTES_REGEX.test(pathname) && pathname.includes('/dash')) {
-		notesButton = (
-			<button onClick={onNotesClicked}>
+	let tasksButton = null
+	if (!TASKS_REGEX.test(pathname) && pathname.includes('/dash')) {
+		tasksButton = (
+			<button onClick={onTasksClicked}>
 				<FontAwesomeIcon icon={faFilePen} />
 			</button>
 		)
@@ -77,10 +92,10 @@ export default function DashHeader() {
 		)
 	}
 
-	let newNoteButton = null
-	if (NOTES_REGEX.test(pathname)) {
-		newNoteButton = (
-			<button onClick={onNewNoteClicked}>
+	let newTaskButton = null
+	if (TASKS_REGEX.test(pathname)) {
+		newTaskButton = (
+			<button onClick={onNewTaskClicked}>
 				<FontAwesomeIcon icon={faFileCirclePlus} />
 			</button>
 		)
@@ -93,26 +108,49 @@ export default function DashHeader() {
 	} else {
 		buttonContent = (
 			<>
-				{newNoteButton}
+				{newTaskButton}
 				{newUserButton}
-				{notesButton}
+				{tasksButton}
 				{usersButton}
 				{logoutButton}
 			</>
 		)
 	}
 
+	const toggleDrawer = (newOpen) => {
+		setOpen(newOpen)
+	}
+
 	const content = (
 		<>
-			<p>{error?.data?.message}</p>
-			<header>
-				<div>
-					<Link to="/dash">
-						<h1>techNotes</h1>
-					</Link>
-					<nav>{buttonContent}</nav>
-				</div>
-			</header>
+			<AppBar position="static">
+				<header>
+					<Toolbar>
+						<Button onClick={() => toggleDrawer(true)}>
+							<MenuIcon sx={{ color: 'primary.light' }} />
+						</Button>
+						<Typography align="center">
+							<Link
+								component={RouterLink}
+								to="/dash"
+								color="inherit"
+								underline="none">
+								Project
+							</Link>
+						</Typography>
+						<nav>{buttonContent}</nav>
+					</Toolbar>
+					<Drawer
+						variant="temporary"
+						open={open}
+						onClose={() => toggleDrawer(false)}>
+						<Box onClick={() => toggleDrawer(false)}>
+							<Welcome />
+						</Box>
+					</Drawer>
+				</header>
+				<Typography>{error?.data?.message}</Typography>
+			</AppBar>
 		</>
 	)
 

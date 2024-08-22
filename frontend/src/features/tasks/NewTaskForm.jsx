@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAddNewNoteMutation } from "../notes/notesApiSlice";
+import { useAddNewTaskMutation } from "../tasks/tasksApiSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
 
-export default function NewNoteForm({ users }) {
+export default function NewTaskForm({ users }) {
   const navigate = useNavigate();
 
-  const [addNewNote, { isSuccess, isError, error, isLoading }] =
-    useAddNewNoteMutation();
+  const [addNewTask, { isSuccess, isError, error, isLoading }] =
+    useAddNewTaskMutation();
 
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
@@ -19,7 +19,7 @@ export default function NewNoteForm({ users }) {
       setTitle("");
       setText("");
       setUserId("");
-      navigate("/dash/notes");
+      navigate("/dash/tasks");
     }
   }, [isSuccess, navigate]);
 
@@ -29,10 +29,10 @@ export default function NewNoteForm({ users }) {
 
   const canSave = [title, text, userId].every(Boolean) && !isLoading;
 
-  const onSaveNoteClicked = async (e) => {
+  const onSaveTaskClicked = async (e) => {
     e.preventDefault();
     if (canSave) {
-      await addNewNote({ user: userId, title, text });
+      await addNewTask({ user: userId, title, text });
     }
   };
 
@@ -47,9 +47,9 @@ export default function NewNoteForm({ users }) {
   const content = (
     <>
       <p>{error?.data?.message}</p>
-      <form action="" onSubmit={onSaveNoteClicked}>
+      <form action="" onSubmit={onSaveTaskClicked}>
         <div>
-          <h2>New Note</h2>
+          <h2>New Task</h2>
           <div>
             <button disabled={!canSave}>
               <FontAwesomeIcon icon={faSave} />

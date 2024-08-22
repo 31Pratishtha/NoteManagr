@@ -3,34 +3,34 @@ import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom'
 
 import { useSelector } from 'react-redux'
-import { selectNoteById } from './notesApiSlice'
+import { selectTaskById } from './tasksApiSlice'
 
-export default function Note({ noteId }) {
-	const note = useSelector((state) => selectNoteById(state, noteId))
+export default function Task({ taskId }) {
+	const task = useSelector((state) => selectTaskById(state, taskId))
 	const navigate = useNavigate()
 
-	if (note) {
-		const created = new Date(note.createdAt).toLocaleString('en-US', {
+	if (task) {
+		const created = new Date(task.createdAt).toLocaleString('en-US', {
 			day: 'numeric',
 			month: 'long',
 			year: 'numeric',
 		})
 
-		const updated = new Date(note.updatedAt).toLocaleString('en-US', {
+		const updated = new Date(task.updatedAt).toLocaleString('en-US', {
 			day: 'numeric',
 			month: 'long',
 			year: 'numeric',
 		})
 
-		const handleEdit = () => navigate(`/dash/notes/${noteId}`)
+		const handleEdit = () => navigate(`/dash/tasks/${taskId}`)
 
 		return (
 			<tr>
-				<td>{note.completed ? <span>Completed</span> : <span>Open</span>}</td>
+				<td>{task.completed ? <span>Completed</span> : <span>Open</span>}</td>
 				<td>{created}</td>
 				<td>{updated}</td>
-				<td>{note.title}</td>
-				<td>{note.username}</td>
+				<td>{task.title}</td>
+				<td>{task.username}</td>
 				<td>
 					<button onClick={handleEdit}>
 						<FontAwesomeIcon icon={faPenToSquare} />

@@ -1,16 +1,16 @@
 import React from 'react'
-import { useGetNotesQuery } from './notesApiSlice'
-import Note from './Note'
+import { useGetTasksQuery } from './tasksApiSlice'
+import Task from './Task'
 import useAuth from '../../hooks/useAuth'
 
-export default function NotesList() {
+export default function TasksList() {
 	const {
-		data: notes,
+		data: tasks,
 		isLoading,
 		isSuccess,
 		isError,
 		error,
-	} = useGetNotesQuery(undefined, {
+	} = useGetTasksQuery(undefined, {
 		pollingInterval: 15000,
 		refetchOnFocus: true,
 		refetchOnMountOrArgChange: true,
@@ -24,10 +24,10 @@ export default function NotesList() {
 
 	if (isError) content = <p>{error?.data?.message}</p>
 
-	// console.log(notes)
+	// console.log(tasks)
 
 	if (isSuccess) {
-		const { ids, entities } = notes
+		const { ids, entities } = tasks
     console.log(ids)
     console.log(entities);
 		let filteredIds
@@ -36,14 +36,14 @@ export default function NotesList() {
 			filteredIds = [...ids]
 		} else {
 			filteredIds = ids.filter(
-        (noteId) => entities[noteId].username === username
+        (taskId) => entities[taskId].username === username
 			)
       console.log(filteredIds)
 		}
 
 		const tableContent =
 			ids?.length && 
-			filteredIds.map((noteId) => <Note key={noteId} noteId={noteId} />)
+			filteredIds.map((taskId) => <Task key={taskId} taskId={taskId} />)
 
 		content = (
 			<table>

@@ -1,10 +1,10 @@
 import express from "express";
 import {
-  getAllNotes,
-  createNewNote,
-  updateNote,
-  deleteNote,
-} from "../controllers/noteController.js";
+  getAllTasks,
+  createNewTask,
+  updateTask,
+  deleteTask,
+} from "../controllers/taskController.js";
 import verifyJWT from "../middleware/verifyJWT.js";
 
 const router = express.Router();
@@ -13,9 +13,9 @@ router.use(verifyJWT)
 
 router
   .route("/")
-  .get(getAllNotes)
-  .post(createNewNote)
-  .patch(updateNote)
-  .delete(deleteNote);
+  .get(getAllTasks)
+  .post(createNewTask)
+  .patch(updateTask)
+  .delete(deleteTask);
 
 export default router;
