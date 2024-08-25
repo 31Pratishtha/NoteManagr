@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import {
-	Typography,
-	Toolbar,
-	AppBar,
-	Drawer,
-	List,
-	ListItem,
-	Box,
-	Button,
-	Link,
-} from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
+import { Typography, Toolbar, AppBar, Button, Link, Box } from '@mui/material'
+import { Logout } from '@mui/icons-material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
 	faRightFromBracket,
@@ -22,7 +12,6 @@ import {
 import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom'
 import { useSendLogoutMutation } from '../features/auth/authApiSlice'
 import useAuth from '../hooks/useAuth'
-import Welcome from '../features/auth/Welcome'
 
 const DASH_REGEX = /^\/dash(\/)?$/
 const TASKS_REGEX = /^\/dash\/tasks(\/)?$/
@@ -32,8 +21,6 @@ export default function DashHeader() {
 	const navigate = useNavigate()
 	const { pathname } = useLocation()
 	const { isAdmin, isManager } = useAuth()
-
-	const [open, setOpen] = useState(false)
 
 	const [sendLogout, { isLoading, isError, error, isSuccess }] =
 		useSendLogoutMutation()
@@ -58,14 +45,20 @@ export default function DashHeader() {
 	if (isError) return <p>Error: {error.data.message}</p>
 
 	const logoutButton = (
-		<button onClick={handleLogoutClicked}>
-			<FontAwesomeIcon icon={faRightFromBracket} />
-		</button>
+		<Button
+			variant="contained"
+			color="secondary"
+			size="small"
+			sx={{ display: 'flex', gap: '10px' }}
+			onClick={handleLogoutClicked}>
+			<Logout />
+			Logout
+		</Button>
 	)
 
 	let usersButton = null
 	if (isManager || isAdmin) {
-		if (!USERS_REGEX.test(pathname) && pathname.includes('/dash')) {
+		if (!USERS_REGEX.test(pathname) && TASKS_REGEX.test(pathname)) {
 			usersButton = (
 				<button onClick={onUsersClicked}>
 					<FontAwesomeIcon icon={faUserGear} />
@@ -75,7 +68,7 @@ export default function DashHeader() {
 	}
 
 	let tasksButton = null
-	if (!TASKS_REGEX.test(pathname) && pathname.includes('/dash')) {
+	if (!TASKS_REGEX.test(pathname) && USERS_REGEX.test(pathname)) {
 		tasksButton = (
 			<button onClick={onTasksClicked}>
 				<FontAwesomeIcon icon={faFilePen} />
@@ -117,38 +110,21 @@ export default function DashHeader() {
 		)
 	}
 
-	const toggleDrawer = (newOpen) => {
-		setOpen(newOpen)
-	}
-
 	const content = (
 		<>
-			<AppBar position="static">
-				<header>
-					<Toolbar>
-						<Button onClick={() => toggleDrawer(true)}>
-							<MenuIcon sx={{ color: 'primary.light' }} />
-						</Button>
-						<Typography align="center">
-							<Link
-								component={RouterLink}
-								to="/dash"
-								color="inherit"
-								underline="none">
-								Project
-							</Link>
-						</Typography>
-						<nav>{buttonContent}</nav>
-					</Toolbar>
-					<Drawer
-						variant="temporary"
-						open={open}
-						onClose={() => toggleDrawer(false)}>
-						<Box onClick={() => toggleDrawer(false)}>
-							<Welcome />
-						</Box>
-					</Drawer>
-				</header>
+			<AppBar component="header" position="static">
+				<Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+					<Typography align="center">
+						<Link
+							component={RouterLink}
+							to="/dash"
+							color="inherit"
+							underline="none">
+							Sample Project
+						</Link>
+					</Typography>
+					<nav>{buttonContent}</nav>
+				</Toolbar>
 				<Typography>{error?.data?.message}</Typography>
 			</AppBar>
 		</>

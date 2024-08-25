@@ -3,10 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
+import { useTheme, BottomNavigation, Typography, Box } from '@mui/material'
 
 export default function DashFooter() {
 	const navigate = useNavigate()
 	const { pathname } = useLocation()
+	const theme = useTheme()
 
 	const { username, status } = useAuth()
 
@@ -20,11 +22,11 @@ export default function DashFooter() {
 		)
 	}
 	const content = (
-		<footer>
+		<Box component='footer' sx={{ bottom: 0, width: '100%', display: 'flex', flexDirection: 'column', padding: '1rem 2rem'}}>
 			{goHomeButton}
-			<p>Current User: {username}</p>
-			<p>Status: {status}</p>
-		</footer>
+			<Typography >Current User: {username}</Typography>
+			<Typography>Status: {status}</Typography>
+		</Box>
 	)
 	return content
 }

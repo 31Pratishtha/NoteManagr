@@ -3,6 +3,8 @@ import { useGetTasksQuery } from './tasksApiSlice'
 import Task from './Task'
 import useAuth from '../../hooks/useAuth'
 
+import { TableContainer, Table, TableHead, TableBody, Paper, TableRow, TableCell } from '@mui/material'
+
 export default function TasksList() {
 	const {
 		data: tasks,
@@ -24,41 +26,41 @@ export default function TasksList() {
 
 	if (isError) content = <p>{error?.data?.message}</p>
 
-	// console.log(tasks)
-
 	if (isSuccess) {
 		const { ids, entities } = tasks
-    console.log(ids)
-    console.log(entities);
+		console.log(ids)
+		console.log(entities)
 		let filteredIds
 
 		if (isAdmin || isManager) {
 			filteredIds = [...ids]
 		} else {
 			filteredIds = ids.filter(
-        (taskId) => entities[taskId].username === username
+				(taskId) => entities[taskId].username === username
 			)
-      console.log(filteredIds)
+			console.log(filteredIds)
 		}
 
 		const tableContent =
-			ids?.length && 
+			ids?.length &&
 			filteredIds.map((taskId) => <Task key={taskId} taskId={taskId} />)
 
 		content = (
-			<table>
-				<thead>
-					<tr>
-						<th>Status</th>
-						<th>Created</th>
-						<th>Updated</th>
-						<th>Title</th>
-						<th>Owner</th>
-						<th>Edit</th>
-					</tr>
-				</thead>
-				<tbody>{tableContent}</tbody>
-			</table>
+			<TableContainer component={Paper} sx={{margin: '2rem 0rem'}}>
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell>Status</TableCell>
+							<TableCell>Created</TableCell>
+							<TableCell>Updated</TableCell>
+							<TableCell>Title</TableCell>
+							<TableCell>Owner</TableCell>
+							<TableCell>Edit</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>{tableContent}</TableBody>
+				</Table>
+			</TableContainer>
 		)
 	}
 
