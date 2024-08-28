@@ -1,8 +1,9 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom'
+import {Edit} from '@mui/icons-material'
 
-import {TableCell, TableRow} from '@mui/material'
+import {Button, TableCell, TableRow} from '@mui/material'
 
 import { useSelector } from 'react-redux'
 import { selectTaskById } from './tasksApiSlice'
@@ -26,6 +27,7 @@ export default function Task({ taskId }) {
 
 		const handleEdit = () => navigate(`/dash/tasks/${taskId}`)
 
+		console.log('task: ', task)
 		return (
 			<TableRow>
 				<TableCell>{task.completed ? <span>Completed</span> : <span>Open</span>}</TableCell>
@@ -34,9 +36,9 @@ export default function Task({ taskId }) {
 				<TableCell>{task.title}</TableCell>
 				<TableCell>{task.username}</TableCell>
 				<TableCell>
-					<button onClick={handleEdit}>
-						<FontAwesomeIcon icon={faPenToSquare} />
-					</button>
+					<Button onClick={handleEdit} variant='outlined'>
+						<Edit />
+					</Button>
 				</TableCell>
 			</TableRow>
 		)
