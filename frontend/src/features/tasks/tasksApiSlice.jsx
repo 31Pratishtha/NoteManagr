@@ -20,7 +20,6 @@ export const tasksApiSlice = apiSlice.injectEndpoints({
 			transformResponse: (responseData) => {
 				const loadedTasks = responseData.map((task) => {
 					task.id = task._id
-					// task.uid = task._id;
 					return task
 				})
 				return tasksAdapter.setAll(initialState, loadedTasks)

@@ -7,11 +7,16 @@ import { Outlet } from 'react-router-dom'
 export default function Prefetch() {
 	useEffect(() => {
 		store.dispatch(
-			tasksApiSlice.util.prefetch('getTasks', 'tasksList', { force: true })
+			tasksApiSlice.util.prefetch('getTasks', undefined, { force: true })
 		)
 		store.dispatch(
-			usersApiSlice.util.prefetch('getUsers', 'usersList', { force: true })
+			usersApiSlice.util.prefetch('getUsers', undefined, { force: true })
 		)
+
+		setTimeout(() => {
+			console.log('Users:', store.getState());
+			console.log('Tasks:', store.getState());
+		}, 10000);
 	}, [])
 	return <Outlet />
 }
