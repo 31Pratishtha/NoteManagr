@@ -1,18 +1,26 @@
-import React, { useEffect } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { useEffect, useState } from 'react'
 import {
-	faRightFromBracket,
-	faUserGear,
-	faUserPlus,
-	faFilePen,
-	faFileCirclePlus,
-} from '@fortawesome/free-solid-svg-icons'
-import { useNavigate, useLocation, Link } from 'react-router-dom'
+	Typography,
+	Toolbar,
+	AppBar,
+	Button,
+	Link,
+	Box,
+	Container,
+} from '@mui/material'
+import {
+	Logout,
+	ManageAccounts,
+	PersonAdd,
+	EditNote,
+	NoteAdd,
+} from '@mui/icons-material'
+import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom'
 import { useSendLogoutMutation } from '../features/auth/authApiSlice'
 import useAuth from '../hooks/useAuth'
 
 const DASH_REGEX = /^\/dash(\/)?$/
-const NOTES_REGEX = /^\/dash\/notes(\/)?$/
+const TASKS_REGEX = /^\/dash\/tasks(\/)?$/
 const USERS_REGEX = /^\/dash\/users(\/)?$/
 
 export default function DashHeader() {
@@ -34,55 +42,77 @@ export default function DashHeader() {
 		navigate('/')
 	}
 	const onUsersClicked = () => navigate('/dash/users')
-	const onNotesClicked = () => navigate('/dash/notes')
+	const onTasksClicked = () => navigate('/dash/tasks')
 	const onNewUserClicked = () => navigate('/dash/users/new')
-	const onNewNoteClicked = () => navigate('/dash/notes/new')
+	const onNewTaskClicked = () => navigate('/dash/tasks/new')
 
 	if (isLoading) return <p>Logging out...</p>
 
 	if (isError) return <p>Error: {error.data.message}</p>
 
 	const logoutButton = (
-		<button onClick={handleLogoutClicked}>
-			<FontAwesomeIcon icon={faRightFromBracket} />
-		</button>
+		<Button
+			variant="contained"
+			color="secondary"
+			size="small"
+			sx={{ display: 'flex', gap: '10px' }}
+			onClick={handleLogoutClicked}>
+			<Logout />
+			Logout
+		</Button>
 	)
 
 	let usersButton = null
 	if (isManager || isAdmin) {
-		if (!USERS_REGEX.test(pathname) && pathname.includes('/dash')) {
+		if (!USERS_REGEX.test(pathname) && TASKS_REGEX.test(pathname)) {
 			usersButton = (
-				<button onClick={onUsersClicked}>
-					<FontAwesomeIcon icon={faUserGear} />
-				</button>
+				<Button
+					variant="contained"
+					color="secondary"
+					size="small"
+					onClick={onUsersClicked}>
+					<ManageAccounts />
+				</Button>
 			)
 		}
 	}
 
-	let notesButton = null
-	if (!NOTES_REGEX.test(pathname) && pathname.includes('/dash')) {
-		notesButton = (
-			<button onClick={onNotesClicked}>
-				<FontAwesomeIcon icon={faFilePen} />
-			</button>
+	let tasksButton = null
+	if (!TASKS_REGEX.test(pathname) && USERS_REGEX.test(pathname)) {
+		tasksButton = (
+			<Button
+				variant="contained"
+				color="secondary"
+				size="small"
+				onClick={onTasksClicked}>
+				<EditNote />
+			</Button>
 		)
 	}
 
 	let newUserButton = null
 	if (USERS_REGEX.test(pathname)) {
 		newUserButton = (
-			<button onClick={onNewUserClicked}>
-				<FontAwesomeIcon icon={faUserPlus} />
-			</button>
+			<Button
+				variant="contained"
+				color="secondary"
+				size="small"
+				onClick={onNewUserClicked}>
+				<PersonAdd />
+			</Button>
 		)
 	}
 
-	let newNoteButton = null
-	if (NOTES_REGEX.test(pathname)) {
-		newNoteButton = (
-			<button onClick={onNewNoteClicked}>
-				<FontAwesomeIcon icon={faFileCirclePlus} />
-			</button>
+	let newTaskButton = null
+	if (TASKS_REGEX.test(pathname)) {
+		newTaskButton = (
+			<Button
+				variant="contained"
+				color="secondary"
+				size="small"
+				onClick={onNewTaskClicked}>
+				<NoteAdd />
+			</Button>
 		)
 	}
 
@@ -93,9 +123,9 @@ export default function DashHeader() {
 	} else {
 		buttonContent = (
 			<>
-				{newNoteButton}
+				{newTaskButton}
 				{newUserButton}
-				{notesButton}
+				{tasksButton}
 				{usersButton}
 				{logoutButton}
 			</>
@@ -104,15 +134,21 @@ export default function DashHeader() {
 
 	const content = (
 		<>
-			<p>{error?.data?.message}</p>
-			<header>
-				<div>
-					<Link to="/dash">
-						<h1>techNotes</h1>
-					</Link>
-					<nav>{buttonContent}</nav>
-				</div>
-			</header>
+			<AppBar component="header" position="static">
+					<Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+						<Typography align="center">
+							<Link
+								component={RouterLink}
+								to="/dash"
+								color="inherit"
+								underline="none">
+								Sample Project
+							</Link>
+						</Typography>
+						<Box sx={{ display: 'flex', gap: '1rem' }}>{buttonContent}</Box>
+					</Toolbar>
+					<Typography>{error?.data?.message}</Typography>
+			</AppBar>
 		</>
 	)
 

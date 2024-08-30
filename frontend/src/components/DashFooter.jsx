@@ -1,12 +1,22 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHouse } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
+import {
+	useTheme,
+	BottomNavigation,
+	Typography,
+	Box,
+	Container,
+	Button,
+} from '@mui/material'
+
+import { Home } from '@mui/icons-material'
 
 export default function DashFooter() {
 	const navigate = useNavigate()
 	const { pathname } = useLocation()
+	const theme = useTheme()
 
 	const { username, status } = useAuth()
 
@@ -14,17 +24,27 @@ export default function DashFooter() {
 	let goHomeButton = null
 	if (pathname !== '/dash') {
 		goHomeButton = (
-			<button onClick={onGoHomeClicked}>
-				<FontAwesomeIcon icon={faHouse} />
-			</button>
+			<Button variant="contained" color="primary" onClick={onGoHomeClicked}>
+				<Home />
+			</Button>
 		)
 	}
 	const content = (
-		<footer>
+		<Box
+			sx={{
+				width: '100%',
+				display: 'flex',
+				justifyContent: 'space-between',
+				position: 'relative',
+				bottom: '1rem',
+				paddingX: '3rem',
+			}}>
+			<Box>
+				<Typography>Current User: {username}</Typography>
+				<Typography>Status: {status}</Typography>
+			</Box>
 			{goHomeButton}
-			<p>Current User: {username}</p>
-			<p>Status: {status}</p>
-		</footer>
+		</Box>
 	)
 	return content
 }

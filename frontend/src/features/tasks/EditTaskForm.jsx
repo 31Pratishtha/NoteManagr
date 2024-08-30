@@ -1,34 +1,34 @@
 import React, { useEffect, useState } from 'react'
-import { useUpdateNoteMutation, useDeleteNoteMutation } from './notesApiSlice'
+import { useUpdateTaskMutation, useDeleteTaskMutation } from './tasksApiSlice'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons'
 import useAuth from '../../hooks/useAuth'
 
-export default function EditNoteForm({ note, users }) {
+export default function EditTaskForm({ task, users }) {
 	const navigate = useNavigate()
 	const { isManager, isAdmin } = useAuth()
-	const [updateNote, { isLoading, isError, error, isSuccess }] =
-		useUpdateNoteMutation()
+	const [updateTask, { isLoading, isError, error, isSuccess }] =
+		useUpdateTaskMutation()
 
 	const [
-		deleteNote,
+		deleteTask,
 		{ isSuccess: isDelSuccess, isError: isDelError, error: delError },
-	] = useDeleteNoteMutation()
+	] = useDeleteTaskMutation()
 
-	const [title, setTitle] = useState(note.title)
-	const [text, setText] = useState(note.text)
-	const [completed, setCompleted] = useState(note.completed)
-	const [userId, setUserId] = useState(note.user)
+	const [title, setTitle] = useState(task.title)
+	const [text, setText] = useState(task.text)
+	const [completed, setCompleted] = useState(task.completed)
+	const [userId, setUserId] = useState(task.user)
 
-	const created = new Date(note.createdAt).toLocaleString('en-us', {
+	const created = new Date(task.createdAt).toLocaleString('en-us', {
 		day: 'numeric',
 		month: 'long',
 		year: 'numeric',
 		hour: 'numeric',
 		minute: 'numeric',
 	})
-	const updated = new Date(note.updatedAt).toLocaleString('en-us', {
+	const updated = new Date(task.updatedAt).toLocaleString('en-us', {
 		day: 'numeric',
 		month: 'long',
 		year: 'numeric',
@@ -41,23 +41,23 @@ export default function EditNoteForm({ note, users }) {
 			setTitle('')
 			setText('')
 			setUserId('')
-			navigate('/dash/notes')
+			navigate('/dash/tasks')
 		}
 	}, [isSuccess, isDelSuccess, navigate])
 
-	const onUpdateNoteClicked = async (e) => {
+	const onUpdateTaskClicked = async (e) => {
 		e.preventDefault()
-		await updateNote({
-			id: note.id,
+		await updateTask({
+			id: task.id,
 			user: userId,
 			title,
 			text,
 			completed,
 		})
 	}
-	const onDeleteNoteClicked = async (e) => {
+	const onDeleteTaskClicked = async (e) => {
 		e.preventDefault()
-		await deleteNote({ id: note.id })
+		await deleteTask({ id: task.id })
 	}
 
 	const onTitleChanged = (e) => {
@@ -83,10 +83,10 @@ export default function EditNoteForm({ note, users }) {
 
 	const errorContent = (error?.data?.message || delError?.data?.message) ?? ''
 
-	let deleteNoteButton = null
+	let deleteTaskButton = null
 	if (isManager || isAdmin) {
-		deleteNoteButton = (
-			<button onClick={onDeleteNoteClicked}>
+		deleteTaskButton = (
+			<button onClick={onDeleteTaskClicked}>
 				<FontAwesomeIcon icon={faTrash} />
 			</button>
 		)
@@ -96,12 +96,12 @@ export default function EditNoteForm({ note, users }) {
 			<p>{errorContent}</p>
 			<form action="" onSubmit={(e) => e.preventDefault()}>
 				<div>
-					<h2>Edit Note</h2>
+					<h2>Edit Task</h2>
 					<div>
-						<button onClick={onUpdateNoteClicked}>
+						<button onClick={onUpdateTaskClicked}>
 							<FontAwesomeIcon icon={faSave} />
 						</button>
-						{deleteNoteButton}
+						{deleteTaskButton}
 					</div>
 				</div>
 
