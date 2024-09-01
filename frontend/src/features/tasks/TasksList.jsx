@@ -1,9 +1,10 @@
 import React from 'react'
 import { useGetTasksQuery } from './tasksApiSlice'
-import Task from './Task'
 import useAuth from '../../hooks/useAuth'
-
-import { TableContainer, Table, TableHead, TableBody, Paper, TableRow, TableCell } from '@mui/material'
+import { Edit } from '@mui/icons-material'
+import { Paper, Button } from '@mui/material'
+import { DataGrid } from '@mui/x-data-grid'
+import { useNavigate } from 'react-router-dom'
 
 export default function TasksList() {
 	const {
@@ -19,6 +20,7 @@ export default function TasksList() {
 	})
 
 	const { username, isAdmin, isManager } = useAuth()
+	const navigate = useNavigate()
 
 	let content
 
@@ -26,10 +28,10 @@ export default function TasksList() {
 
 	if (isError) content = <p>{error?.data?.message}</p>
 
+	const rows = []
+
 	if (isSuccess) {
 		const { ids, entities } = tasks
-		console.log(ids)
-		console.log(entities)
 		let filteredIds
 
 		if (isAdmin || isManager) {
@@ -38,31 +40,70 @@ export default function TasksList() {
 			filteredIds = ids.filter(
 				(taskId) => entities[taskId].username === username
 			)
-			console.log(filteredIds)
 		}
 
-		const tableContent =
-			ids?.length &&
-			filteredIds.map((taskId) => <Task key={taskId} taskId={taskId} />)
+		filteredIds.map((taskId) => {
+			let oneEntity = entities[taskId]
+
+			const created = new Date(oneEntity.createdAt).toLocaleString('en-US', {
+				day: 'numeric',
+				month: 'long',
+				year: 'numeric',
+			})
+
+			const updated = new Date(oneEntity.updatedAt).toLocaleString('en-US', {
+				day: 'numeric',
+				month: 'long',
+				year: 'numeric',
+			})
+
+			rows.push({
+				id: oneEntity.id,
+				status: oneEntity.completed ? 'Completed' : 'Open',
+				created: created,
+				updated: updated,
+				title: oneEntity.title,
+				assignedTo: oneEntity.username,
+			})
+		})
+
+		const columns = [
+			{ field: 'status', headerName: 'Status', width: 150 },
+			{ field: 'created', headerName: 'Created', flex: 1.5 },
+			{ field: 'updated', headerName: 'Updated', flex: 1.5 },
+			{ field: 'title', headerName: 'Title', flex: 2 },
+			{ field: 'assignedTo', headerName: 'Assigned To', flex: 2 },
+			{
+				field: 'edit',
+				headerName: 'Edit',
+				renderCell: (params) => (
+					<Button
+						variant="outlined"
+						onClick={() => navigate(`/dash/tasks/${params.id}`)}>
+						<Edit />
+					</Button>
+				),
+			},
+		]
 
 		content = (
-			<TableContainer component={Paper} sx={{margin: '2rem 0rem'}}>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell>Status</TableCell>
-							<TableCell>Created</TableCell>
-							<TableCell>Updated</TableCell>
-							<TableCell>Title</TableCell>
-							<TableCell>Owner</TableCell>
-							<TableCell>Edit</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>{tableContent}</TableBody>
-				</Table>
-			</TableContainer>
+			<Paper sx={{ height: '32rem', marginY: '2rem' }}>
+				<DataGrid
+					sx={{ paddingX: '2rem' }}
+					columns={columns}
+					rows={rows}
+					pageSizeOptions={[5, 10, 25]}
+					initialState={{
+						pagination: {
+							paginationModel: { pageSize: 25 },
+						},
+					}}
+				/>
+			</Paper>
 		)
+
+		return content
 	}
 
-	return content
+	return null
 }

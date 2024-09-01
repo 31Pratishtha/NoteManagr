@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react'
 import { useGetUsersQuery } from './usersApiSlice'
-import User from './User'
 import useTitle from '../../hooks/useTitle'
+import { Edit } from '@mui/icons-material'
+import { Paper, Button } from '@mui/material'
+import { DataGrid } from '@mui/x-data-grid'
+import { useNavigate } from 'react-router-dom'
 
 export default function UsersList() {
 	useTitle('Users')
@@ -17,28 +20,59 @@ export default function UsersList() {
 		refetchOnMountOrArgChange: true,
 	})
 
+	const navigate = useNavigate()
+
 	let content
 
 	if (isLoading) content = <p>Loading...</p>
 
 	if (isError) content = <p>{error?.data?.message}</p>
 
+	const rows = []
+
 	if (isSuccess) {
-		const { ids } = users
-		const tableContent =
-			ids?.length && ids.map((userId) => <User key={userId} userId={userId} />)
+		const { ids, entities } = users
+		ids?.length &&
+			ids.map((userId) => {
+				let oneEntity = entities[userId]
+				const userRoleString = oneEntity.roles.toString().replaceAll(',', ', ')
+				rows.push({
+					id: userId,
+					username: oneEntity.username,
+					roles: userRoleString,
+				})
+			})
+
+		const columns = [
+			{ field: 'username', headerName: 'Username', flex: 1 },
+			{ field: 'roles', headerName: 'Roles', flex: 1 },
+			{
+				field: 'edit',
+				headerName: 'Edit',
+				renderCell: (params) => (
+					<Button
+						variant="outlined"
+						onClick={() => navigate(`/dash/users/${params.id}`)}>
+						<Edit />
+					</Button>
+				),
+			},
+		]
 
 		content = (
-			<table>
-				<thead>
-					<tr>
-						<th scope="col">Username</th>
-						<th scope="col">Roles</th>
-						<th scope="col">Edit</th>
-					</tr>
-				</thead>
-				<tbody>{tableContent}</tbody>
-			</table>
+			<Paper sx={{ height: '32rem', marginY: '2rem' }}>
+				<DataGrid
+					sx={{ paddingX: '5rem' }}
+					columns={columns}
+					rows={rows}
+					pageSizeOptions={[5, 10, 25]}
+					initialState={{
+						pagination: {
+							paginationModel: { pageSize: 25 },
+						},
+					}}
+				/>
+			</Paper>
 		)
 	}
 
