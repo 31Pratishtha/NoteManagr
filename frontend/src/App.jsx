@@ -28,7 +28,8 @@ const theme = createTheme({
 		},
 		accent: {
 			main: '#2A7221',
-			light: '#b7e3b56f'
+			light: '#b7e3b56f',
+			hover: '#73b7699c'
 		},
 		text: {
 			default: '#020202ff',

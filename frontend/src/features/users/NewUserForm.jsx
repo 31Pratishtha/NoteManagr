@@ -11,6 +11,7 @@ import {
 	InputLabel,
 	Select,
 	MenuItem,
+	useTheme
 } from '@mui/material'
 
 const USER_REGEX = /^[A-Za-z]{3,20}$/
@@ -18,6 +19,7 @@ const PWD_REGEX = /^[A-z0-9!@#$%&*]{4,12}$/
 
 export default function NewUserForm() {
 	const navigate = useNavigate()
+	const theme = useTheme()
 
 	const [addNewUser, { isSuccess, isError, error, isLoading }] =
 		useAddNewUserMutation()
@@ -112,12 +114,19 @@ export default function NewUserForm() {
 					</FormGroup>
 				</Stack>
 				<Button
-					sx={{ marginTop: '2rem', padding: '1rem 2rem' }}
+					sx={{
+						marginTop: '2rem',
+						padding: '1rem 2rem',
+						backgroundColor: theme.palette.accent.light,
+						color: theme.palette.accent.main,
+						'&:hover': {backgroundColor: theme.palette.accent.hover, },
+
+					}}
 					type="submit"
 					label="submit"
 					variant="contained"
 					size="large">
-					<Save />
+					<Save color="inherit" />
 				</Button>
 			</form>
 		</>
