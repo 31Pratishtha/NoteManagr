@@ -10,10 +10,12 @@ import {
 	InputLabel,
 	Select,
 	MenuItem,
+	useTheme,
 } from '@mui/material'
 
 export default function NewTaskForm({ users }) {
 	const navigate = useNavigate()
+	const theme = useTheme()
 
 	const [addNewTask, { isSuccess, isError, error, isLoading }] =
 		useAddNewTaskMutation()
@@ -82,12 +84,19 @@ export default function NewTaskForm({ users }) {
 					</FormGroup>
 				</Stack>
 				<Button
-					sx={{ marginTop: '2rem', padding: '1rem 2rem' }}
+					sx={{
+						marginTop: '2rem',
+						padding: '1rem 2rem',
+						backgroundColor: theme.palette.accent.light,
+						color: theme.palette.accent.main,
+						'&:hover': {backgroundColor: theme.palette.accent.hover, },
+
+					}}
 					type="submit"
 					label="submit"
 					variant="contained"
 					size="large">
-					<Save />
+					<Save color="inherit" />
 				</Button>
 			</form>
 		</>

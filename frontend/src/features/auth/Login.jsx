@@ -55,6 +55,13 @@ export default function Login() {
 		}
 	}
 
+	const handleDemoAcc = () => {
+		setUsername('Manson')
+		setPassword('!abcd')
+		console.log(username)
+		console.log(password)
+	}
+
 	if (isLoading) return <p>Loading...</p>
 
 	const content = (
@@ -90,6 +97,7 @@ export default function Login() {
 						<input type="checkbox" onChange={handleToggle} checked={persist} />
 						Trust this device
 					</label>
+					<button onClick={handleDemoAcc}>Use Demo account</button>
 				</form>
 			</main>
 			<footer>
