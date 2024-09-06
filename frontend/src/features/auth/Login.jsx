@@ -4,12 +4,24 @@ import { useDispatch } from 'react-redux'
 import { useEffect, useRef, useState } from 'react'
 import { useLoginMutation } from './authApiSlice'
 import { setCredentials } from './authSlice'
+import {
+	Paper,
+	Grid,
+	Container,
+	Box,
+	TextField,
+	Button,
+	FormControlLabel,
+	Checkbox,
+	useTheme,
+} from '@mui/material'
 
 export default function Login() {
 	const [username, setUsername] = useState('')
 	const [password, setPassword] = useState('')
 	const [errMsg, setErrMsg] = useState('')
-
+	const theme = useTheme()
+	
 	const [persist, setPersist] = usePersist()
 
 	const userRef = useRef()
@@ -65,45 +77,104 @@ export default function Login() {
 	if (isLoading) return <p>Loading...</p>
 
 	const content = (
-		<section>
-			<header>
-				<h1>Employee Login</h1>
-			</header>
-			<main>
-				<p ref={errRef} aria-live="assertive">
-					{errMsg}
-				</p>
-				<form action="" onSubmit={handleFormSubmit}>
-					<label htmlFor="username">Username: </label>
-					<input
-						type="text"
-						required
-						ref={userRef}
-						value={username}
-						onChange={handleUserInput}
-					/>
+		<Container>
+			<Box
+				sx={{
+					height: '100vh',
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+				}}>
+				<Paper
+					component="section"
+					elevation={10}
+					sx={{ maxHeight: '70%', width: '80%', display: 'flex' }}>
+					<Grid container align="center" md={{}}>
+						<Grid item xs={12} md={6} sx={{ height: '100%' }}>
+							<Box sx={{ height: '100%', overflow: 'hidden' }}>
+								<img
+									src="src/assets/login.webp"
+									alt="notesss"
+									style={{
+										width: '100%',
+										height: '100%',
+										objectFit: 'cover',
+										objectPosition: '0px -8rem',
+									}}
+								/>
+							</Box>
+						</Grid>
+						<Grid
+							item
+							xs={12}
+							md={6}
+							sx={{
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
+							}}>
+							<Box
+								sx={{
+									width: '85%',
+									display: 'flex',
+									flexDirection: 'column',
+									gap: '1rem',
+								}}>
+								<h1>Employee Login</h1>
+								{errMsg ? (
+									<p ref={errRef} aria-live="assertive">
+										{errMsg}
+									</p>
+								) : null}
 
-					<label htmlFor="password">Password: </label>
-					<input
-						type="password"
-						required
-						value={password}
-						onChange={handlePwdInput}
-					/>
+								<Box
+									component="form"
+									sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+									action=""
+									onSubmit={handleFormSubmit}>
+									<TextField
+										size="small"
+										label="Username"
+										placeholder="Enter Username"
+										fullWidth
+										required
+										ref={userRef}
+										value={username}
+										onChange={handleUserInput}
+									/>
 
-					<button>Log In</button>
+									<TextField
+										size="small"
+										label="Password"
+										placeholder="Enter Password"
+										fullWidth
+										type="password"
+										required
+										value={password}
+										onChange={handlePwdInput}
+									/>
+									<FormControlLabel
+										htmlFor="persist"
+										control={<Checkbox defaultChecked />}
+										onChange={handleToggle}
+										checked={persist}
+										label="Trust this device"
+									/>
 
-					<label htmlFor="persist">
-						<input type="checkbox" onChange={handleToggle} checked={persist} />
-						Trust this device
-					</label>
-					<button onClick={handleDemoAcc}>Use Demo account</button>
-				</form>
-			</main>
-			<footer>
-				<Link to="/">Back to Home</Link>
-			</footer>
-		</section>
+									<Button onClick={handleDemoAcc} fullWidth variant="contained">
+										Use Demo account
+									</Button>
+									<Button type="submit" fullWidth variant="outlined">
+										Log In
+									</Button>
+								</Box>
+								<Link to="/">Back to Home</Link>
+							</Box>
+						</Grid>
+					</Grid>
+				</Paper>
+			</Box>
+		</Container>
 	)
 	return content
 }

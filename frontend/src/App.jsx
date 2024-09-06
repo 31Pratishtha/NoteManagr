@@ -22,17 +22,18 @@ const theme = createTheme({
 			contrastText: '#F9F9F9ff'
 		},
 		secondary: {
-			main: '#79dafd',
+			// main: '#79dafd',
+			main: '#7EC9AC',
 			light: '#F9F9F9ff',
 			contrastText: '#020202ff'
 		},
 		accent: {
 			main: '#2A7221',
 			light: '#b7e3b56f',
-			hover: '#73b7699c'
+			hover: '#73b7699c',
 		},
 		text: {
-			default: '#020202ff',
+			default: '#2a7221da',
 		},
 	},
 	typography: {
