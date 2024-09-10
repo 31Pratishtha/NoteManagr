@@ -11,7 +11,7 @@ export default function EditUser() {
 	const content = user ? (
 		<EditUserForm user={user} />
 	) : (
-		<PulseLoader color="#FFF" />
+		<p>Loading...</p>
 	)
 	return content
 }

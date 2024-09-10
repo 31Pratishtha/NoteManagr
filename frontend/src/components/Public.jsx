@@ -57,10 +57,11 @@ export default function Public() {
 							fontSize={60}
 							align="center"
 							fontWeight={700}
-							letterSpacing='0.1rem'>
-							
+							letterSpacing="0.1rem">
 							Welcome to <br />{' '}
-							<span style={{color: theme.palette.primary.main}}>WindzTasksManager</span>
+							<span style={{ color: theme.palette.primary.main }}>
+								WindzTasksManager
+							</span>
 						</Typography>
 						<Typography
 							align="center"
@@ -70,8 +71,8 @@ export default function Public() {
 							lineHeight={1.75}
 							fontSize={20}
 							letterSpacing="0.07em">
-							Effortlessly manage your tasks, track progress, and collaborate{' '}
-							<br /> Designed for teams and individuals who value efficiency.{' '}
+							Effortlessly manage your tasks, track progress, and collaborate.
+							<br /> Designed for teams and individuals who value efficiency.
 							<br /> Dive in and take control of your productivity today!"
 						</Typography>
 						<Button
