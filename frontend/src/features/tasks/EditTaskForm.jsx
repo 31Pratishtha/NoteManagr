@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { useUpdateTaskMutation, useDeleteTaskMutation } from './tasksApiSlice'
 import { useNavigate } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave, faTrash } from '@fortawesome/free-solid-svg-icons'
 import useAuth from '../../hooks/useAuth'
+import {
+	Box,
+	Button,
+	Stack,
+	TextField,
+	FormGroup,
+	InputLabel,
+	MenuItem,
+	Select,
+	Typography,
+	FormControlLabel,
+	Checkbox,
+} from '@mui/material'
+import { Save, Delete } from '@mui/icons-material'
 
 export default function EditTaskForm({ task, users }) {
 	const navigate = useNavigate()
@@ -19,6 +31,7 @@ export default function EditTaskForm({ task, users }) {
 	const [title, setTitle] = useState(task.title)
 	const [text, setText] = useState(task.text)
 	const [completed, setCompleted] = useState(task.completed)
+	console.log('completed: ', completed)
 	const [userId, setUserId] = useState(task.user)
 
 	const created = new Date(task.createdAt).toLocaleString('en-us', {
@@ -67,7 +80,8 @@ export default function EditTaskForm({ task, users }) {
 		setText(e.target.value)
 	}
 	const onStatusChanged = (e) => {
-		setCompleted((prev) => !prev)
+		// setCompleted((prev) => !prev)
+		setCompleted(e.target.checked)
 	}
 	const onUserIdChanged = (e) => {
 		setUserId(e.target.value)
@@ -75,9 +89,9 @@ export default function EditTaskForm({ task, users }) {
 
 	const options = users.map((user) => {
 		return (
-			<option value={user.id} key={user.id}>
+			<MenuItem value={user.id} key={user.id}>
 				{user.username}
-			</option>
+			</MenuItem>
 		)
 	})
 
@@ -86,47 +100,71 @@ export default function EditTaskForm({ task, users }) {
 	let deleteTaskButton = null
 	if (isManager || isAdmin) {
 		deleteTaskButton = (
-			<button onClick={onDeleteTaskClicked}>
-				<FontAwesomeIcon icon={faTrash} />
-			</button>
+			<Button size="large" variant="contained" onClick={onDeleteTaskClicked}>
+				<Delete />
+			</Button>
 		)
 	}
 	const content = (
 		<>
-			<p>{errorContent}</p>
+			<p>{error?.data?.message}</p>
 			<form action="" onSubmit={(e) => e.preventDefault()}>
-				<div>
-					<h2>Edit Task</h2>
-					<div>
-						<button onClick={onUpdateTaskClicked}>
-							<FontAwesomeIcon icon={faSave} />
-						</button>
+				<h2>Edit Task</h2>
+				<Stack gap={2}>
+					<Box display="flex" gap={5}>
+						<Button
+							size="large"
+							variant="contained"
+							onClick={onUpdateTaskClicked}>
+							<Save />
+						</Button>
 						{deleteTaskButton}
-					</div>
-				</div>
+					</Box>
+					<Box display="flex" gap={7}>
+						<Typography>
+							Created At: <br /> {created}
+						</Typography>
+						<Typography>
+							Updated At: <br /> {updated}
+						</Typography>
+					</Box>
 
-				<label htmlFor="title">Title:</label>
-				<input type="text" id="title" value={title} onChange={onTitleChanged} />
+					<TextField
+						label="Title"
+						onChange={onTitleChanged}
+						value={title}
+					/>
 
-				<label htmlFor="text">Description:</label>
-				<textarea id="text" value={text} onChange={onTextChanged}></textarea>
+					<TextField
+						required
+						label="Description"
+						multiline
+						rows={3}
+						value={text}
+						onChange={onTextChanged}
+					/>
 
-				<label htmlFor="status">Status:</label>
-				<input type="checkbox" checked={completed} onChange={onStatusChanged} />
+					<FormControlLabel
+						control={
+							<Checkbox
+								sx={{ width: '3.5rem' }}
+								label="Completed"
+								checked={completed}
+								size="large"
+								onChange={onStatusChanged}
+							/>
+						}
+						label="Completed"
+					/>
 
-				<label htmlFor="user">Assigned To:</label>
-				<select id="userId" value={userId} onChange={onUserIdChanged}>
-					{options}
-				</select>
+					<FormGroup>
+						<InputLabel>Assigned To:</InputLabel>
+						<Select required value={userId} onChange={onUserIdChanged}>
+							{options}
+						</Select>
+					</FormGroup>
 
-				<div>
-					<p>
-						Created At: <br /> {created}
-					</p>
-					<p>
-						Updated At: <br /> {updated}
-					</p>
-				</div>
+				</Stack>
 			</form>
 		</>
 	)

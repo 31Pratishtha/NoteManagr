@@ -1,135 +1,167 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 import {
-  useUpdateUserMutation,
-  useDeleteUserMutation,
-} from "../users/usersApiSlice";
-import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave, faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import { ROLES } from "../../config/roles.js";
+	useUpdateUserMutation,
+	useDeleteUserMutation,
+} from '../users/usersApiSlice'
+import { useNavigate } from 'react-router-dom'
+import { ROLES } from '../../config/roles.js'
+import {
+	Box,
+	Button,
+	Stack,
+	TextField,
+	FormGroup,
+	InputLabel,
+	MenuItem,
+	Select,
+	Typography,
+	FormControlLabel,
+	Checkbox,
+} from '@mui/material'
+import { Save, Delete } from '@mui/icons-material'
 
-const USER_REGEX = /^[A-Za-z]{3,20}$/;
-const PWD_REGEX = /^[A-Z0-9!@#$%&*]{4,12}$/;
+const USER_REGEX = /^[A-Za-z]{3,20}$/
+const PWD_REGEX = /^[A-Z0-9!@#$%&*]{4,12}$/
 
 export default function EditUserForm({ user }) {
-  const navigate = useNavigate();
+	const navigate = useNavigate()
 
-  const [updateUser, { isLoading, isSuccess, isError, error }] =
-    useUpdateUserMutation();
+	const [updateUser, { isLoading, isSuccess, isError, error }] =
+		useUpdateUserMutation()
 
-  const [
-    deleteUser,
-    { isSuccess: isDelSuccess, isError: isDelError, error: delerror },
-  ] = useDeleteUserMutation();
+	const [
+		deleteUser,
+		{ isSuccess: isDelSuccess, isError: isDelError, error: delerror },
+	] = useDeleteUserMutation()
 
-  const [username, setUsername] = useState(user.username);
-  const [validUsername, setValidUsername] = useState(false);
-  const [password, setPassword] = useState("");
-  const [validpassword, setValidPassword] = useState(false);
-  const [roles, setRoles] = useState(user.roles);
-  const [active, setActive] = useState(user.active);
+	const [username, setUsername] = useState(user.username)
+	const [validUsername, setValidUsername] = useState(false)
+	const [password, setPassword] = useState('')
+	const [validpassword, setValidPassword] = useState(false)
+	const [roles, setRoles] = useState(user.roles)
+	const [active, setActive] = useState(user.active)
 
-  useEffect(() => {
-    setValidUsername(USER_REGEX.test(username));
-  }, [username]);
+	useEffect(() => {
+		setValidUsername(USER_REGEX.test(username))
+	}, [username])
 
-  useEffect(() => {
-    setValidPassword(PWD_REGEX.test(password));
-  }, [password]);
+	useEffect(() => {
+		setValidPassword(PWD_REGEX.test(password))
+	}, [password])
 
-  useEffect(() => {
-    if (isSuccess || isDelSuccess) {
-      setUsername("");
-      setPassword("");
-      setRoles([]);
-      navigate("/dash/users");
-    }
-  }, [isSuccess, isDelSuccess, navigate]);
+	useEffect(() => {
+		if (isSuccess || isDelSuccess) {
+			setUsername('')
+			setPassword('')
+			setRoles([])
+			navigate('/dash/users')
+		}
+	}, [isSuccess, isDelSuccess, navigate])
 
-  const onUserNameChanged = (e) => setUsername(e.target.value);
-  const onPasswordChanged = (e) => setPassword(e.target.value);
+	const onUserNameChanged = (e) => setUsername(e.target.value)
+	const onPasswordChanged = (e) => setPassword(e.target.value)
 
-  const onRolesChanged = (e) => {
-    const values = Array.from(
-      e.target.selectedOptions, //HTMLCollection
-      (option) => option.value
-    );
-    setRoles(values);
-  };
+	const onRolesChanged = (e) => {
+		setRoles(e.target.value)
+	}
 
-  const options = Object.values(ROLES).map((role) => {
-    return (
-      <option key={role} value={role}>
-        {role}
-      </option>
-    );
-  });
+	const options = Object.values(ROLES).map((role) => {
+		return (
+			<MenuItem key={role} value={role}>
+				{role}
+			</MenuItem>
+		)
+	})
 
-  const onActiveChanged = () => setActive((prev) => !prev);
+	const onActiveChanged = () => setActive((prev) => !prev)
 
-  let canSave;
-  if (password)
-    canSave =
-      [roles.length, validUsername, validpassword].every(Boolean) && !isLoading;
-  else canSave = [roles.length, validUsername].every(Boolean) && !isLoading;
+	let canSave
+	if (password)
+		canSave =
+			[roles.length, validUsername, validpassword].every(Boolean) && !isLoading
+	else canSave = [roles.length, validUsername].every(Boolean) && !isLoading
 
-  const onUpdateUserClicked = async (e) => {
-    e.preventDefault();
-    if (password) {
-      await updateUser({ id: user.id, username, password, roles, active });
-    } else {
-      await updateUser({ id: user.id, username, roles, active });
-    }
-  };
+	const onUpdateUserClicked = async (e) => {
+		e.preventDefault()
+		if (password) {
+			await updateUser({ id: user.id, username, password, roles, active })
+		} else {
+			await updateUser({ id: user.id, username, roles, active })
+		}
+	}
 
-  const onDeleteUserClicked = async () => {
-    await deleteUser({ id: user.id });
-  };
+	const onDeleteUserClicked = async () => {
+		await deleteUser({ id: user.id })
+	}
 
-  const errContent = (error?.data?.message || delerror?.data?.message) ?? "";
+	const errContent = (error?.data?.message || delerror?.data?.message) ?? ''
 
-  const content = (
-    <>
-      <p>{errContent}</p>
-      <form action="" onSubmit={(e) => e.preventDefault()}>
-        <div>
-          <h2>Edit User</h2>
-          <div>
-            <button onClick={onUpdateUserClicked} disabled={!canSave}>
-              <FontAwesomeIcon icon={faSave} />
-            </button>
-            <button onClick={onDeleteUserClicked}>
-              <FontAwesomeIcon icon={faTrashCan} />
-            </button>
-          </div>
-        </div>
+	const content = (
+		<>
+			<p>{error?.data?.message}</p>
+			<form action="" onSubmit={(e) => e.preventDefault()}>
+				<h2>Edit User</h2>
+				<Stack gap={3}>
+					<Box display="flex" gap={5}>
+						<Button
+							size="large"
+							variant="contained"
+							onClick={onUpdateUserClicked}>
+							<Save />
+						</Button>
+						<Button
+							size="large"
+							variant="contained"
+							onClick={onDeleteUserClicked}>
+							<Delete />
+						</Button>
+					</Box>
 
-        <label htmlFor="username">Username:</label>
-        <input
-          type="text"
-          id="username"
-          value={username}
-          onChange={onUserNameChanged}
-        />
+					<TextField
+						required
+						label="Username"
+						onChange={onUserNameChanged}
+						value={username}
+					/>
 
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={onPasswordChanged}
-        />
+					<TextField
+						label="Password"
+						type="password"
+						multiline
+						rows={3}
+						value={password}
+						onChange={onPasswordChanged}
+					/>
 
-        <label htmlFor="active">Active: </label>
-        <input type="checkbox" checked={active} onChange={onActiveChanged} />
+					<Box>
+						<FormControlLabel
+							control={
+								<Checkbox
+									sx={{ width: '3.5rem' }}
+									checked={active}
+									size="large"
+									onChange={onActiveChanged}
+								/>
+							}
+							label="Active"
+						/>
+					</Box>
 
-        <label htmlFor="roles">Assigned Roles:</label>
-        <select size="3" name="roles" multiple={true} value={roles} onChange={onRolesChanged}>
-          {options}
-        </select>
-      </form>
-    </>
-  );
+					<FormGroup>
+						<InputLabel>Assigned Roles:</InputLabel>
+						<Select
+							required
+							multiple
+							value={roles}
+							onChange={onRolesChanged}
+							renderValue={(selected) => selected.join(', ')}>
+							{options}
+						</Select>
+					</FormGroup>
+				</Stack>
+			</form>
+		</>
+	)
 
-  return content;
+	return content
 }
